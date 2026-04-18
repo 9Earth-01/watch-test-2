@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000">
+
+    <LinearLayout
+        android:layout_width="280dp"
+        android:layout_height="280dp"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:padding="18dp"
+        android:gravity="center"
+        android:background="@drawable/circle_background">
+
+        <TextView
+            android:id="@+id/text_service_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/service_selection_title"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="20dp" />
+
+        <Button
+            android:id="@+id/button_afe_plus"
+            android:layout_width="200dp"
+            android:layout_height="42dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/btn_stlye_1"
+            android:text="@string/afe_plus"
+            android:textColor="#FFFFFF" />
+
+        <Button
+            android:id="@+id/button_health_services"
+            android:layout_width="200dp"
+            android:layout_height="42dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/btn_stlye_1"
+            android:text="@string/health_services"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
+
+</FrameLayout>
