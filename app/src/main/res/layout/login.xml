@@ -38,6 +38,16 @@
             android:background="@drawable/btn_stlye_1"
             android:text="เชื่อมต่อ" />
 
+        <Button
+            android:id="@+id/btnSkipLogin"
+            android:layout_width="115dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/btn_stlye_1"
+            android:text="ข้ามล็อกอิน"
+            android:textSize="12sp" />
+
         <EditText
             android:id="@+id/inputID"
             android:layout_width="157dp"
