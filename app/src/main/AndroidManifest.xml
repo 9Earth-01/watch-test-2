@@ -90,11 +90,6 @@
         </activity>
 
         <activity
-            android:name=".presentation.ServiceSelectionActivity"
-            android:exported="true"
-            android:theme="@android:style/Theme.DeviceDefault" />
-
-        <activity
             android:name=".presentation.standbymain"
             android:exported="true"
             android:theme="@android:style/Theme.DeviceDefault"
