@@ -3,6 +3,10 @@
 
     <uses-feature android:name="android.hardware.type.watch" />
 
+    <queries>
+        <package android:name="com.google.android.wearable.healthservices" />
+    </queries>
+
     <!-- Power / Network -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -20,7 +24,6 @@
     <!-- Foreground service permissions -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_HEALTH" />
 
     <!-- Sensors / Health -->
     <uses-permission android:name="com.samsung.android.permission.SSENSOR" />
@@ -79,8 +82,8 @@
         <service
             android:name=".presentation.SamsungHealthEventService"
             android:enabled="true"
-            android:exported="false"
-            android:foregroundServiceType="health" />
+            android:exported="true"
+            android:permission="com.google.android.wearable.healthservices.permission.PASSIVE_DATA_BINDING" />
 
         <!-- Launcher -->
         <activity

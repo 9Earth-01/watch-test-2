@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.watchsepawv2"
-        minSdk = 26
+        minSdk = 30
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
@@ -79,6 +79,8 @@ dependencies {
     implementation("androidx.databinding:viewbinding:8.1.2")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel:2.3.1")
+    implementation("androidx.health:health-services-client:1.0.0-beta01")
+    implementation("com.google.guava:guava:31.1-android")
 
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
