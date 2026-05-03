@@ -39,6 +39,10 @@
     <!-- สั่นแจ้งเตือน -->
     <uses-permission android:name="android.permission.VIBRATE" />
 
+    <queries>
+        <package android:name="com.google.android.wearable.healthservices" />
+    </queries>
+
     <application
         android:hardwareAccelerated="true"
         android:allowBackup="true"
@@ -75,6 +79,13 @@
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="location|health" />
+
+        <service
+            android:name=".presentation.SamsungHealthEventService"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="com.google.android.wearable.healthservices.permission.PASSIVE_DATA_BINDING"
+            android:foregroundServiceType="health" />
 
         <!-- Launcher -->
         <activity
