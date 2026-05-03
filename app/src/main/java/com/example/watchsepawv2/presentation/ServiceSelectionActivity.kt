@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import androidx.activity.ComponentActivity
+import androidx.core.content.ContextCompat
 import com.example.watchsepawv2.R
 
 class ServiceSelectionActivity : ComponentActivity() {
@@ -15,6 +16,7 @@ class ServiceSelectionActivity : ComponentActivity() {
         val btnHealthServices = findViewById<Button>(R.id.btnHealthServices)
 
         btnAfePlus.setOnClickListener {
+            startFallDetectionService()
             navigateToMain()
         }
 
@@ -27,5 +29,14 @@ class ServiceSelectionActivity : ComponentActivity() {
         val intent = Intent(this, standbymain::class.java)
         startActivity(intent)
         finish()
+    }
+
+    private fun startFallDetectionService() {
+        val serviceIntent = Intent(this, BackgroundService::class.java)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            ContextCompat.startForegroundService(this, serviceIntent)
+        } else {
+            startService(serviceIntent)
+        }
     }
 }
