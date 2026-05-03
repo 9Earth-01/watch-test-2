@@ -24,6 +24,7 @@ import androidx.health.services.client.PassiveMonitoringClient
 import androidx.health.services.client.data.HealthEvent
 import androidx.health.services.client.data.PassiveListenerConfig
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.guava.await
 
 class SamsungHealthEventService : PassiveListenerService() {
     companion object {
@@ -226,10 +227,6 @@ class SamsungHealthEventService : PassiveListenerService() {
 
         // สำรอง: พยายามเปิด Activity ตรงๆ อีกครั้ง
         try { startActivity(fullScreenIntent) } catch (_: Exception) {}
-    }
-
-    override fun onBind(intent: Intent?): IBinder? {
-        return null
     }
 
     override fun onDestroy() {
