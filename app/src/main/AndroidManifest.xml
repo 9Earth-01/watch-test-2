@@ -76,6 +76,12 @@
             android:exported="false"
             android:foregroundServiceType="location|health" />
 
+        <service
+            android:name=".presentation.SamsungHealthEventService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="health" />
+
         <!-- Launcher -->
         <activity
             android:name=".presentation.login"

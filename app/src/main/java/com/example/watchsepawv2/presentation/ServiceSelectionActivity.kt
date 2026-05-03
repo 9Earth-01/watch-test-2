@@ -16,12 +16,15 @@ class ServiceSelectionActivity : ComponentActivity() {
         val btnHealthServices = findViewById<Button>(R.id.btnHealthServices)
 
         btnAfePlus.setOnClickListener {
+            MyPreferenceData(this).setFallMode(MyPreferenceData.FALL_MODE_CUSTOM)
             startFallDetectionService()
             navigateToMain()
         }
 
         btnHealthServices.setOnClickListener {
             navigateToMain()
+            MyPreferenceData(this).setFallMode(MyPreferenceData.FALL_MODE_SAMSUNG)
+            startSamsungHealthEventService()
         }
     }
 
@@ -33,6 +36,15 @@ class ServiceSelectionActivity : ComponentActivity() {
 
     private fun startFallDetectionService() {
         val serviceIntent = Intent(this, BackgroundService::class.java)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            ContextCompat.startForegroundService(this, serviceIntent)
+        } else {
+            startService(serviceIntent)
+        }
+    }
+
+    private fun startSamsungHealthEventService() {
+        val serviceIntent = Intent(this, SamsungHealthEventService::class.java)
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             ContextCompat.startForegroundService(this, serviceIntent)
         } else {

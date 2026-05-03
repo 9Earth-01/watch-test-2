@@ -170,26 +170,33 @@ class BackgroundService : Service(), ConnectionObserver {
         // ---- Sensors ----
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
 
-        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-        accelerometer?.let { acc ->
-            sensorManager.registerListener(
-                fallSensorListener,
-                acc,
-                SensorManager.SENSOR_DELAY_GAME,
-                0
-            )
-        } ?: Log.e("Sensor", "Accelerometer not available on this device")
+        val preferenceData = MyPreferenceData(this)
+        val fallMode = preferenceData.getFallMode()
 
-        val gyroSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
-        if (gyroSensor != null) {
-            sensorManager.registerListener(
-                gyroListener,
-                gyroSensor,
-                SensorManager.SENSOR_DELAY_GAME,
-                0
-            )
+        if (fallMode == MyPreferenceData.FALL_MODE_CUSTOM) {
+            accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+            accelerometer?.let { acc ->
+                sensorManager.registerListener(
+                    fallSensorListener,
+                    acc,
+                    SensorManager.SENSOR_DELAY_GAME,
+                    0
+                )
+            } ?: Log.e("Sensor", "Accelerometer not available on this device")
+
+            val gyroSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
+            if (gyroSensor != null) {
+                sensorManager.registerListener(
+                    gyroListener,
+                    gyroSensor,
+                    SensorManager.SENSOR_DELAY_GAME,
+                    0
+                )
+            } else {
+                Log.e("Sensor", "Gyroscope not available on this device")
+            }
         } else {
-            Log.e("Sensor", "Gyroscope not available on this device")
+            Log.i("BackgroundService", "Samsung Health fall mode selected, custom fall sensor listeners disabled")
         }
 
         // Heart rate
