@@ -1,29 +1,13 @@
 package com.example.watchsepawv2.presentation
 
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Button
 import androidx.activity.ComponentActivity
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import com.example.watchsepawv2.R
 
 class ServiceSelectionActivity : ComponentActivity() {
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            startSamsungHealthEventService()
-        } else {
-            // Permission denied, fall back to custom mode
-            MyPreferenceData(this).setFallMode(MyPreferenceData.FALL_MODE_CUSTOM)
-            startFallDetectionService()
-            navigateToMain()
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_service_selection)
@@ -38,16 +22,9 @@ class ServiceSelectionActivity : ComponentActivity() {
         }
 
         btnHealthServices.setOnClickListener {
+            navigateToMain()
             MyPreferenceData(this).setFallMode(MyPreferenceData.FALL_MODE_SAMSUNG)
-            if (ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACTIVITY_RECOGNITION
-                ) == PackageManager.PERMISSION_GRANTED) {
-                startSamsungHealthEventService()
-                navigateToMain()
-            } else {
-                requestPermissionLauncher.launch(Manifest.permission.ACTIVITY_RECOGNITION)
-            }
+            startSamsungHealthEventService()
         }
     }
 
