@@ -71,6 +71,7 @@ class BackgroundService : Service(), ConnectionObserver {
     // --------- Sensors / fall detection ---------
     private lateinit var sensorManager: SensorManager
     private var accelerometer: Sensor? = null
+    private var isCustomFallListening = false
     private var isFallDetected = false
 
     private lateinit var heartRateListener: HeartRateListener
@@ -120,6 +121,7 @@ class BackgroundService : Service(), ConnectionObserver {
     companion object {
         const val ACTION_START_TRACKING = "ACTION_START_TRACKING" // ชื่อคำสั่งเปิด
         const val ACTION_STOP_TRACKING = "ACTION_STOP_TRACKING"   // ชื่อคำสั่งปิด
+        const val ACTION_SET_FALL_MODE = "ACTION_SET_FALL_MODE"
         var isEmergencyMode = false
         var isServerAllowTrackingGps = false // อนุญาติให้มีการตรวจสอบว่าผู้ใช้จะเแิดหรอืปิดระบบติดตามแบบ realtime
     }
@@ -170,38 +172,76 @@ class BackgroundService : Service(), ConnectionObserver {
         // ---- Sensors ----
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
 
-        val preferenceData = MyPreferenceData(this)
-        val fallMode = preferenceData.getFallMode()
-
-        if (fallMode == MyPreferenceData.FALL_MODE_CUSTOM) {
-            accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-            accelerometer?.let { acc ->
-                sensorManager.registerListener(
-                    fallSensorListener,
-                    acc,
-                    SensorManager.SENSOR_DELAY_GAME,
-                    0
-                )
-            } ?: Log.e("Sensor", "Accelerometer not available on this device")
-
-            val gyroSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
-            if (gyroSensor != null) {
-                sensorManager.registerListener(
-                    gyroListener,
-                    gyroSensor,
-                    SensorManager.SENSOR_DELAY_GAME,
-                    0
-                )
-            } else {
-                Log.e("Sensor", "Gyroscope not available on this device")
-            }
-        } else {
-            Log.i("BackgroundService", "Samsung Health fall mode selected, custom fall sensor listeners disabled")
-        }
+        applyFallModeFromPreferences()
 
         // Heart rate
         heartRateListener = HeartRateListener(this)
         heartRateListener.startListening()
+    }
+
+    private fun applyFallModeFromPreferences() {
+        val fallMode = MyPreferenceData(this).getFallMode()
+        if (fallMode == MyPreferenceData.FALL_MODE_CUSTOM) {
+            startCustomFallDetection()
+        } else {
+            stopCustomFallDetection()
+            Log.i("BackgroundService", "Samsung Health fall mode selected, custom fall sensor listeners disabled")
+        }
+    }
+
+    private fun startCustomFallDetection() {
+        if (isCustomFallListening) {
+            Log.d("BackgroundService", "Custom fall detection already running")
+            return
+        }
+
+        resetFallDetectionState()
+
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        accelerometer?.let { acc ->
+            sensorManager.registerListener(
+                fallSensorListener,
+                acc,
+                SensorManager.SENSOR_DELAY_GAME,
+                0
+            )
+        } ?: Log.e("Sensor", "Accelerometer not available on this device")
+
+        val gyroSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
+        if (gyroSensor != null) {
+            sensorManager.registerListener(
+                gyroListener,
+                gyroSensor,
+                SensorManager.SENSOR_DELAY_GAME,
+                0
+            )
+        } else {
+            Log.e("Sensor", "Gyroscope not available on this device")
+        }
+
+        isCustomFallListening = true
+        Log.i("BackgroundService", "Custom fall detection started")
+    }
+
+    private fun stopCustomFallDetection() {
+        if (!::sensorManager.isInitialized || !isCustomFallListening) return
+
+        stopCustomFallDetection()
+        isCustomFallListening = false
+        resetFallDetectionState()
+        Log.i("BackgroundService", "Custom fall detection stopped")
+    }
+
+    private fun resetFallDetectionState() {
+        isFallDetected = false
+        state = State.IDLE
+        tImpact = 0L
+        tStateEntered = 0L
+        aPeak = 0f
+        gPeak = 0f
+        dPitchMax = 0f
+        dRollMax = 0f
+        dYawMax = 0f
     }
 
     // =========== GPS continuous update helpers ===========
@@ -609,6 +649,9 @@ class BackgroundService : Service(), ConnectionObserver {
     }
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
+            ACTION_SET_FALL_MODE -> {
+                applyFallModeFromPreferences()
+            }
             ACTION_START_TRACKING -> {
                 Log.d("GPS_CONTROL", "🚨 ได้รับคำสั่งฉุกเฉิน: บังคับเปิด GPS!")
                 isEmergencyMode = true  // เข้าโหมดฉุกเฉิน (ห้ามปิด)

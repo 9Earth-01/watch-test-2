@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.example.watchsepawv2.R
 
 class ServiceSelectionActivity : ComponentActivity() {
@@ -35,6 +36,7 @@ class ServiceSelectionActivity : ComponentActivity() {
         btnAfePlus.setOnClickListener {
             MyPreferenceData(this).setFallMode(MyPreferenceData.FALL_MODE_CUSTOM)
             SamsungHealthEventManager.unregister(this)
+            notifyBackgroundServiceFallModeChanged()
             navigateToMain()
         }
 
@@ -54,7 +56,19 @@ class ServiceSelectionActivity : ComponentActivity() {
     private fun selectSamsungHealthServices() {
         MyPreferenceData(this).setFallMode(MyPreferenceData.FALL_MODE_SAMSUNG)
         SamsungHealthEventManager.register(this)
+        notifyBackgroundServiceFallModeChanged()
         navigateToMain()
+    }
+
+    private fun notifyBackgroundServiceFallModeChanged() {
+        val serviceIntent = Intent(this, BackgroundService::class.java).apply {
+            action = BackgroundService.ACTION_SET_FALL_MODE
+        }
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            ContextCompat.startForegroundService(this, serviceIntent)
+        } else {
+            startService(serviceIntent)
+        }
     }
 
     private fun navigateToMain() {
