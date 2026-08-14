@@ -29,17 +29,12 @@ class login : ComponentActivity() {
             goToServiceSelection()
         }
         val btnConnect = findViewById<Button>(R.id.btnConnect)
-        val btnSkipLogin = findViewById<Button>(R.id.btnSkipLogin)
 
         btnConnect.setOnClickListener{
             val uId = findViewById<EditText>(R.id.inputID).text.toString()
             val uPin = findViewById<EditText>(R.id.inputPIN).text.toString()
             requestQueue = Volley.newRequestQueue(this)
             connectPhoneApp(uId, uPin)
-        }
-
-        btnSkipLogin.setOnClickListener {
-            goToServiceSelection()
         }
     }
 
@@ -98,4 +93,3 @@ class login : ComponentActivity() {
         finish()
     }
 }
-
